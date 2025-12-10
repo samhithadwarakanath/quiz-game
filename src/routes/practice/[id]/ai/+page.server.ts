@@ -6,8 +6,13 @@ import { eq } from 'drizzle-orm';
 import { VertexAI } from "@google-cloud/vertexai";
 import { StructuredOutputParser } from "@langchain/core/output_parsers";
 import { z } from "zod";
+import { ensureVertexCredentialsFile } from "$lib/server/vertex-creds.server";
+import { env } from "$env/dynamic/private";
+
 
 export const load = async ({ params }) => {
+    ensureVertexCredentialsFile();
+
     const sessionId = Number(params.id);
 
     if (isNaN(sessionId)) {
@@ -52,8 +57,9 @@ export const load = async ({ params }) => {
     const format = parser.getFormatInstructions();
 
     const vertexClient = new VertexAI({
-        project: process.env.VERTEX_PROJECT_ID,
-        location: process.env.VERTEX_LOCATION
+        project: env.VERTEX_PROJECT_ID,
+        location: env.VERTEX_LOCATION
+
     });
 
     const generativeModel = vertexClient.getGenerativeModel({
