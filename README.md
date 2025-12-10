@@ -9,9 +9,7 @@ A small SvelteKit-based quiz application that includes a server-side AI-powered 
 - Automated tests with Playwright and Vitest
 - Integrates with Google Vertex AI (Gemini) for targeted practice generation
 
-## Author
 
-- GitHub: `samhithadwarakanath`
 
 ## Deployment
 
@@ -161,6 +159,8 @@ Happy to expand any section or add visual assets.
 # sv
 
 
+## Author
 
+- GitHub: `samhithadwarakanath`
 
 
