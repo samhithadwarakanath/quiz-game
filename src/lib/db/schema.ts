@@ -32,7 +32,9 @@ export const quizAttempts = sqliteTable("quiz_attempts", {
   userId: text("userId").notNull(),
   questionId: integer("questionId").notNull(),
   selectedOption: text("selectedOption").notNull(),
-  isCorrect: integer("isCorrect", { mode: "boolean" }).notNull()
+  isCorrect: integer("isCorrect", { mode: "boolean" }).notNull(),
+  sessionId: integer('session_id').notNull(),
+
 });
 
 /* -------------------------
@@ -43,4 +45,17 @@ export const quizScores = sqliteTable("quiz_scores", {
   userId: text("userId").notNull(),
   score: integer("score").notNull(),
   total: integer("total").notNull()
+});
+
+/* -------------------------
+   QUIZ SESSIONS
+-------------------------- */
+export const quizSessions = sqliteTable('quiz_sessions', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: text('user_id').notNull(),
+  score: integer('score').notNull(),
+  total: integer('total').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date())
 });

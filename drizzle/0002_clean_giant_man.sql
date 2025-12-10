@@ -1,0 +1,1 @@
+ALTER TABLE `quiz_attempts` ADD `session_id` integer NOT NULL;

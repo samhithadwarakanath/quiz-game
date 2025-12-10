@@ -56,13 +56,17 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
   }
 
   // Create session cookie
-  cookies.set("session_id", userId, {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: false,
-    maxAge: 60 * 60 * 24 * 7
-  });
+  console.log("Before delete:", cookies.get("session_id"));
+
+cookies.delete("session_id", {
+  path: "/",
+  sameSite: "lax",
+  httpOnly: true,
+  secure: false
+});
+
+console.log("After delete:", cookies.get("session_id"));
+
 
   throw redirect(302, "/");
 };

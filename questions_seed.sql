@@ -1,0 +1,22 @@
+INSERT INTO quiz_questions (question, optionA, optionB, optionC, optionD, correctOption, createdBy) VALUES
+("What does “cc” refer to in motorcycle engines?", "Cooling capacity", "Cylinder count", "Cubic centimeters of engine displacement", "Clutch compression", "C", NULL),
+("Which motorcycle manufacturer created the Ninja series?", "Yamaha", "Kawasaki", "Suzuki", "Honda", "B", NULL),
+("What type of motorcycle is best suited for long-distance touring?", "Cruiser", "Adventure bike", "Sportbike", "Track bike", "B", NULL),
+("ABS in motorcycles stands for:", "Advanced Brake Support", "Anti-Brake System", "Advanced Biking System", "Anti-lock Braking System", "D", NULL),
+("A “monoshock” refers to which motorcycle component?", "Brake type", "Rear suspension", "Engine cooling system", "Exhaust design", "B", NULL),
+("Which component affects motorcycle leaning dynamics the most?", "Headlight alignment", "Tire profile", "Clutch cable", "Chain lubrication", "B", NULL),
+("What is the primary function of a motorcycle fairing?", "Improve engine cooling", "Aerodynamics and wind protection", "Reduce braking distance", "Increase exhaust sound", "B", NULL),
+("What engine configuration is most common in sportbikes?", "Inline-4", "V-Twin", "Boxer", "Single-cylinder", "A", NULL),
+("Which brand produces the “MT” lineup (MT-03, MT-07, MT-09)?", "Honda", "BMW", "Yamaha", "Ducati", "C", NULL),
+("What is counter-steering?", "Turning handlebars toward the direction you want to go", "Leaning opposite the turn", "Pushing the handlebar away from the turn to initiate lean", "Using only rear brake to steer", "C", NULL),
+
+("What does “HP” mean in cars?", "Heat pressure", "Horsepower", "Hybrid performance", "High-precision engine", "B", NULL),
+("Which brand manufactures the Supra?", "Toyota", "Nissan", "Mazda", "Subaru", "A", NULL),
+("What is the purpose of a turbocharger?", "Increase fuel economy", "Reduce engine temperature", "Force more air into the engine to increase power", "Improve braking performance", "C", NULL),
+("AWD stands for:", "All-Wheel Drive", "Auto Wheel Distribution", "Advanced Wheel Dynamics", "Anti-Wheel Drift", "A", NULL),
+("Which company created the V8 “Hemi” engine?", "Chevrolet", "Dodge", "Ford", "GMC", "B", NULL),
+("What does RPM measure?", "Road speed", "Engine revolutions per minute", "Fuel consumption", "Torque output", "B", NULL),
+("Main advantage of disc brakes over drum brakes:", "Quieter braking", "Higher durability", "Better heat dissipation and stopping power", "Lower cost", "C", NULL),
+("Which Italian manufacturer produces the Aventador?", "Ferrari", "Maserati", "Lamborghini", "Pagani", "C", NULL),
+("What does ECU stand for?", "Engine Control Unit", "Electronic Cooling Utility", "Energy Conversion Unit", "Emergency Cut-off Unit", "A", NULL),
+("Front-wheel drive cars tend to:", "Understeer", "Oversteer", "Drift naturally", "Spin easily under braking", "A", NULL);

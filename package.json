@@ -48,6 +48,11 @@
 		"vitest-browser-svelte": "^2.0.1"
 	},
 	"dependencies": {
-		"dotenv": "^17.2.3"
+		"@google-cloud/vertexai": "^1.10.0",
+		"@langchain/core": "^1.1.4",
+		"@langchain/google-genai": "^2.0.4",
+		"@langchain/google-vertexai": "^2.0.4",
+		"dotenv": "^17.2.3",
+		"zod": "^4.1.13"
 	}
 }

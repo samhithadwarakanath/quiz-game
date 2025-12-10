@@ -1,45 +1,36 @@
-import type { ServerLoad, Actions } from '@sveltejs/kit';
 import { redirect, fail } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+import { quizSessions } from '$lib/db/schema';
+import { eq } from 'drizzle-orm';
 
-import { db } from '$lib/db/client.js';
-import { quizQuestions, quizAttempts, quizScores } from '$lib/db/schema.js';
+import { db } from '$lib/db/client';
+import { quizQuestions, quizAttempts, quizScores } from '$lib/db/schema';
 import { inArray } from 'drizzle-orm';
 
-// ---------------------
-// LOAD QUESTIONS
-// ---------------------
-export const load: ServerLoad = async ({ locals }) => {
-    console.log("LOAD USER:", locals.user);
-
+export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user) {
         throw redirect(302, '/login');
     }
 
     const questions = await db.select().from(quizQuestions).limit(5);
 
-    console.log("LOADED QUESTIONS:", questions);
-
-    return { questions };  
+    return { questions };
 };
 
-
-// ---------------------
-// ACTION
-// ---------------------
 export const actions: Actions = {
-    default: async ({ request, locals }) => {
+    submit: async ({ request, locals }) => {
+
         console.log("QUIZ ACTION RAN");
 
         if (!locals.user) throw redirect(302, '/login');
-
         const userId = locals.user.id;
 
         const formData = await request.formData();
-        console.log("FORMDATA:", [...formData.entries()]);
+        const entries = [...formData.entries()];
 
-        const answers = [];
+        const answers: { questionId: number; selectedOption: string }[] = [];
 
-        for (const [key, value] of formData.entries()) {
+        for (const [key, value] of entries) {
             if (key.startsWith('q-')) {
                 answers.push({
                     questionId: Number(key.slice(2)),
@@ -48,46 +39,63 @@ export const actions: Actions = {
             }
         }
 
-        if (answers.length === 0) {
-            return fail(400, { form: { message: "No answers submitted." } });
-        }
-
-        // Fetch actual DB questions
-        const questionRows = await db
+        const ids = answers.map(a => a.questionId);
+        const rows = await db
             .select()
             .from(quizQuestions)
-            .where(inArray(quizQuestions.id, answers.map(a => a.questionId)));
+            .where(inArray(quizQuestions.id, ids));
 
-        let correctCount = 0;
+        let correct = 0;
 
-        for (const ans of answers) {
-            const q = questionRows.find(q => q.id === ans.questionId);
-            if (!q) continue;
+// 1. Compute score
+for (const ans of answers) {
+    const q = rows.find(q => q.id === ans.questionId);
+    if (!q) continue;
 
-            const isCorrect = ans.selectedOption === q.correctOption;
-            if (isCorrect) correctCount++;
+    const isCorrect = ans.selectedOption === q.correctOption;
+    if (isCorrect) correct++;
+}
 
-            await db.insert(quizAttempts).values({
-                userId,
-                questionId: ans.questionId,
-                selectedOption: ans.selectedOption,
-                isCorrect
-            });
-        }
+console.log(`User ${userId} scored ${correct} out of ${answers.length}`);
 
-        await db.insert(quizScores).values({
-            userId,
-            score: correctCount,
-            total: answers.length
-        });
 
-        // This is what +page.svelte will receive
-        return {
-            form: {
-                message: "Quiz submitted!",
-                score: correctCount,
-                total: answers.length
-            }
-        };
+// 2. Create session FIRST
+const [session] = await db
+    .insert(quizSessions)
+    .values({
+        userId,
+        score: correct,
+        total: answers.length
+    })
+    .returning({ id: quizSessions.id });
+
+
+// 3. Insert attempts WITH sessionId
+for (const ans of answers) {
+    const q = rows.find(q => q.id === ans.questionId);
+    if (!q) continue;
+
+    const isCorrect = ans.selectedOption === q.correctOption;
+
+    await db.insert(quizAttempts).values({
+        userId,
+        questionId: ans.questionId,
+        selectedOption: ans.selectedOption,
+        isCorrect,
+        sessionId: session.id     // ⭐ REQUIRED
+    });
+}
+
+
+// 4. Insert into quizScores (optional)
+await db.insert(quizScores).values({
+    userId,
+    score: correct,
+    total: answers.length
+});
+
+
+// 5. Redirect to results page
+throw redirect(302, `/result/${session.id}`);
     }
 };
