@@ -59,3 +59,14 @@ export const quizSessions = sqliteTable('quiz_sessions', {
     .notNull()
     .$defaultFn(() => new Date())
 });
+
+/* -------------------------
+   AUTH SESSIONS (LOGIN)
+-------------------------- */
+export const sessions = sqliteTable('sessions', {
+  id: text('id').primaryKey(),         // UUID session token
+  userId: text('userId').notNull(),    // reference to users.id
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date())
+});

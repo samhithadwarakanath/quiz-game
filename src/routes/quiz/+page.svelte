@@ -50,7 +50,26 @@
 				</fieldset>
 			{/each}
 
-			<button type="submit">Submit Quiz</button>
+			
+			<div style="text-align: center; margin-top: 2rem;">
+  <button
+    type="submit"
+    style="
+      padding: 1.2rem 2.5rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border-radius: 10px;
+      background: #ff4500;
+      color: white;
+      border: none;
+    "
+  >
+    Submit Quiz
+  </button>
+</div>
+
+
+
 		</form>
 	{/if}
 {/if}

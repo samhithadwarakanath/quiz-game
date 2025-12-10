@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(302, '/login');
     }
 
-    const questions = await db.select().from(quizQuestions).limit(5);
+    const questions = await db.select().from(quizQuestions).limit(20);
 
     return { questions };
 };

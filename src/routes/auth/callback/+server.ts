@@ -1,22 +1,23 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
 import { db } from "$lib/db/client";
-import { users } from "$lib/db/schema";
+import { users, sessions } from "$lib/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "@sveltejs/kit";
+import { randomUUID } from "crypto";
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
   const code = url.searchParams.get("code");
   if (!code) throw redirect(302, "/login");
 
-  // Exchange the authorization code for tokens
+  // Exchange code for tokens
   const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: env.GOOGLE_CLIENT_ID ?? "",
-      client_secret: env.GOOGLE_CLIENT_SECRET ?? "",
-      redirect_uri: env.GOOGLE_REDIRECT_URI ?? "",
+      client_id: env.GOOGLE_CLIENT_ID,
+      client_secret: env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: env.GOOGLE_REDIRECT_URI,
       grant_type: "authorization_code",
       code
     })
@@ -36,13 +37,8 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
   const email = payload.email;
   const picture = payload.picture;
 
-  // -----------------------------
-  // Manual UPSERT for Turso
-  // -----------------------------
-  const existingUser = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, userId));
+  // Upsert user
+  const existingUser = await db.select().from(users).where(eq(users.id, userId));
 
   if (existingUser.length > 0) {
     await db.update(users).set({ name, email, picture }).where(eq(users.id, userId));
@@ -55,18 +51,24 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
     });
   }
 
-  // Create session cookie
-  console.log("Before delete:", cookies.get("session_id"));
+  // Create session
+  // Create login session
+const sessionId = randomUUID();
 
-cookies.delete("session_id", {
+await db.insert(sessions).values({
+  id: sessionId,
+  userId
+});
+
+// Save cookie
+cookies.set("session_id", sessionId, {
   path: "/",
-  sameSite: "lax",
   httpOnly: true,
+  sameSite: "lax",
   secure: false
 });
 
-console.log("After delete:", cookies.get("session_id"));
 
-
-  throw redirect(302, "/");
+  // 🚀 FINAL STEP: REDIRECT TO QUIZ
+  throw redirect(303, "/");
 };

@@ -1,9 +1,10 @@
 import { redirect } from "@sveltejs/kit";
 
-export const GET = ({ cookies }) => {
+export const GET = async ({ cookies }) => {
   cookies.delete("session_id", {
-    path: "/",        // must match cookie set path
+    path: "/",
+    sameSite: "lax"
   });
 
-  return redirect(302, "/login");
+  throw redirect(303, "/");
 };
