@@ -101,6 +101,12 @@ Browser -> SvelteKit (routes) -> /practice/:id/ai (server)
   -> ensureVertexCredentialsFile -> Vertex AI
   <- Vertex AI response -> parse -> return explanation + practice question
 
+## Video
+
+https://youtu.be/WtaCAVOb4DE
+
+  
+
 ## Local development
 
 1. Install dependencies
